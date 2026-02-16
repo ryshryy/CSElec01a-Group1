@@ -2,7 +2,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-# --- 1. Load Original Individual Data (3.1) ---
 # This part tracks the "live" progression for each of the 8 coins
 file_path = r'RAW_3-4.csv' 
 try:
@@ -29,12 +28,10 @@ except FileNotFoundError:
     print("Individual toss file (RAW_3-4.csv) not found. Skipping Graph 3.1.")
     coins_data = {}
 
-# --- 2. Load and Process the "Right Data" (3.2, 3.3, 4.1) ---
 # This uses the specific summary percentages you provided
 df_summary = pd.read_csv(r'RAW_3.csv')
 
 # Calculate the combined Final Heads/Tails for the summary graphs
-# We average Tiles and Wood percentages (ignoring 0 values like Class 2 on Tiles)
 def get_final_avg(row):
     h_vals = [h for h in [row['H Tiles'], row['H Wood']] if h > 0]
     t_vals = [t for t in [row['T Tiles'], row['T Wood']] if t > 0]
@@ -52,8 +49,6 @@ for _, row in df_summary.iterrows():
 
 df_final = df_summary[['Coin Class', 'Final Heads', 'Final Tails']].rename(columns={'Coin Class': 'Class'})
 
-# --- Updated Plotting Logic ---
-
 def plot_in_chunks(data_dict, title_prefix, color_h='orange', color_t='blue', is_avg=False):
     """Helper function to plot items in chunks of 4 (2x2 grid)"""
     items = list(data_dict.items())
@@ -64,7 +59,6 @@ def plot_in_chunks(data_dict, title_prefix, color_h='orange', color_t='blue', is
         
         for j, (key, data) in enumerate(chunk):
             if is_avg:
-                # For 3.2, we compare Wood vs Tiles percentages for each class
                 x_labels = data.index
                 x_pos = np.arange(len(x_labels))
                 width = 0.35
@@ -111,7 +105,6 @@ plt.grid(True, alpha=0.3)
 plt.show()
 
 # Graph 4.1: Bar Graph (Overall Average H&T Across ALL Coin Classes)
-# CHANGED: Now shows only two bars for the entire experiment's average
 overall_h = df_final['Final Heads'].mean()
 overall_t = df_final['Final Tails'].mean()
 
